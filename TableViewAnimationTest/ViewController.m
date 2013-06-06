@@ -6,6 +6,10 @@
 //  Copyright (c) 2013 Golf Contender. All rights reserved.
 //
 
+
+#warning resizing works when the animations are added in cellforrow, but wonky shit happens when you add the animations in  viewdidappear
+
+
 #import "ViewController.h"
 #import <QuartzCore/QuartzCore.h>
 @interface ViewController ()
@@ -13,7 +17,8 @@
 @end
 
 @implementation ViewController
-
+int const CELL_VIEW_TAG = 1;
+float const CELL_ANIMATION_DELAY = 0.05f;
 - (void)viewDidLoad
 {
     [super viewDidLoad];
@@ -31,18 +36,33 @@
     
 }
 
+-(void)viewDidAppear:(BOOL)animated
+{
+#warning remove comment and add comment to if statement in cellforrow
+    //animate cells that are visible
+    int count = 0;
+    for(UITableViewCell *cell in self.menuTableView.visibleCells)
+    {
+        UIView *subView = [cell viewWithTag:CELL_VIEW_TAG];
+        CALayer *sublayer = subView.layer;
+        [self addAnimationsToLayer:sublayer count:count];
+        count++;
+    }
+     
+}
+
 #pragma mark - Table view data source
 
 - (NSInteger)numberOfSectionsInTableView:(UITableView *)tableView
 {
-#warning Potentially incomplete method implementation.
+
     // Return the number of sections.
     return 1;
 }
 
 - (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section
 {
-#warning Incomplete method implementation.
+
     // Return the number of rows in the section.
     return 20;
 }
@@ -78,12 +98,8 @@
     
     if(shouldDoTableAnimations)
     {
-        sublayer.opacity = 0.0f;
-        float delay = 0.05f * (indexPath.row);
-        
-        [sublayer addAnimation:[self opacityAnimation:0.0f toValue:1.0f delay:delay] forKey:@"opacityAnimation"];
-        [sublayer addAnimation:[self positionAnimation:CGPointMake(0, 0) endPoint:sublayer.position delay:delay] forKey:@"positionAnimation"];
-        [sublayer addAnimation:[self frameAnimation:CGRectMake(0, 0, 0, 0) endFrame:sublayer.frame delay:delay] forKey:@"frameAnimation"];
+#warning remove comment and comment out viewdidappear
+        //[self addAnimationsToLayer:sublayer count:indexPath.row];
     }
     
     [cellUIView.layer addSublayer:sublayer];
@@ -97,6 +113,16 @@
     //NSLog(@"%f", cell.frame.size.width);
 
     return cell;
+}
+
+-(void) addAnimationsToLayer:(CALayer *)sublayer count:(int)count
+{
+    sublayer.opacity = 1.0f;
+    float delay = CELL_ANIMATION_DELAY * (count);
+    
+    //[sublayer addAnimation:[self opacityAnimation:0.0f toValue:1.0f delay:delay] forKey:@"opacityAnimation"];
+    //[sublayer addAnimation:[self positionAnimation:CGPointMake(0, 0) endPoint:sublayer.position delay:delay] forKey:@"positionAnimation"];
+    [sublayer addAnimation:[self frameAnimation:CGRectMake(0, 0, 0, 0) endFrame:sublayer.frame delay:delay] forKey:@"frameAnimation"];
 }
 
 -(CABasicAnimation *)opacityAnimation:(float)fromValue toValue:(float)toValue delay:(float)delay
@@ -139,7 +165,7 @@
     anim.toValue = [NSValue valueWithCGRect:endFrame];
     anim.removedOnCompletion = NO;
     [anim setFillMode:kCAFillModeForwards];
-    [anim setDuration:0.8f];
+    [anim setDuration:1.8f];
     [anim setTimingFunction:[CAMediaTimingFunction functionWithName:kCAMediaTimingFunctionDefault]];
     anim.repeatCount = 1;
     anim.beginTime = CACurrentMediaTime() + delay;
