@@ -72,11 +72,6 @@ float const CELL_ANIMATION_DELAY = 0.05f;
     sublayer.frame = CGRectMake(0, 0, 37, 37);
 
 	cellUIView.transform =	CGAffineTransformTranslate(CGAffineTransformMakeScale(0.3, 0.3), -1000, 0);
-	[UIView animateWithDuration:1.8f delay:CELL_ANIMATION_DELAY * indexPath.row options:0 animations:^{
-		cellUIView.transform = CGAffineTransformIdentity;
-	} completion:^(BOOL finished) {
-		;
-	}];
     
 
     [cellUIView.layer addSublayer:sublayer];
@@ -85,6 +80,16 @@ float const CELL_ANIMATION_DELAY = 0.05f;
 
 
     return cell;
+}
+
+- (void)tableView:(UITableView *)tableView willDisplayCell:(UITableViewCell *)cell forRowAtIndexPath:(NSIndexPath *)indexPath
+{
+	UIView *cellUIView = [cell viewWithTag:1];
+	[UIView animateWithDuration:1.8f delay:CELL_ANIMATION_DELAY * indexPath.row options:0 animations:^{
+		cellUIView.transform = CGAffineTransformIdentity;
+	} completion:^(BOOL finished) {
+		;
+	}];
 }
 
 
